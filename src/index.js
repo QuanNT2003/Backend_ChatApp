@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
-// const mongoose = require('mongoose')
-// const routes = require('./routes')
+const mongoose = require("mongoose");
+const routes = require("./routes");
 const bodyParter = require("body-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
@@ -23,16 +23,17 @@ app.use(
   })
 );
 
-// routes(app);
+routes(app);
 
-// mongoose.connect('mongodb+srv://ngotrungquan1412:RDWAyGyKQASdP5Ft@shoedatabase.mwau4pa.mongodb.net/')
-//     .then(() => {
-//         console.log("Connect success");
-//     })
-//     .catch((err) => {
-//         console.log(err);
-//     })
+mongoose
+  .connect(process.env.MongoURL)
+  .then(() => {
+    console.log("Connect success");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 app.listen(port, () => {
-  console.log("Server is running in port" + port);
+  console.log("Server is running in port " + port);
 });
