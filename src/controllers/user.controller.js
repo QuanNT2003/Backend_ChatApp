@@ -61,9 +61,37 @@ const refreshToken = async (req, res) => {
     });
   }
 };
+
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const respone = await UserServices.updateUser(id, req.body);
+    return res.status(200).json(respone);
+  } catch (e) {
+    return res.status(404).json({
+      messge: e,
+    });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const respone = await UserServices.updatePassword(id, req.body);
+    return res.status(200).json(respone);
+  } catch (e) {
+    return res.status(404).json({
+      messge: e,
+    });
+  }
+};
 module.exports = {
   signIn,
   login,
   getDetailUser,
   refreshToken,
+  updateUser,
+  updatePassword,
 };

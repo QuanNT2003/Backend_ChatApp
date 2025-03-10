@@ -46,16 +46,17 @@ const login = (obj) => {
         email: obj.email,
       });
 
-      console.log("user", user);
-      console.log("obj", obj);
+      // console.log("user", user);
+      // console.log("obj", obj);
       const isPasswordCorrect = await bcrypt.compare(
         obj.password,
         user.password
       );
+      console.log(isPasswordCorrect);
       if (!isPasswordCorrect) {
         return resolve({
           status: 400, // Sử dụng số thay vì chuỗi
-          message: "Invalid credentials",
+          message: "Incorrect password",
         });
       }
       // console.log(user);
@@ -102,8 +103,63 @@ const getUser = (id) => {
   });
 };
 
+const updateUser = (userId, obj) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const updateUser = await User.findOneAndUpdate(
+        { _id: userId },
+        {
+          obj,
+        },
+        {
+          new: true,
+        }
+      );
+
+      resolve({
+        status: "OK",
+        message: "success",
+        data: updateUser,
+      });
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
+  });
+};
+
+const updatePassword = (userId, obj) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(obj);
+
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = await bcrypt.hash(obj.password, salt);
+      const updateUser = await User.findOneAndUpdate(
+        { _id: userId },
+        {
+          password: hashPassword,
+        },
+        {
+          new: true,
+        }
+      );
+
+      resolve({
+        status: "OK",
+        message: "success",
+        data: updateUser,
+      });
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
+  });
+};
 module.exports = {
   signUp,
   login,
   getUser,
+  updateUser,
+  updatePassword,
 };
