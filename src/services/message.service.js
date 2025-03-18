@@ -31,7 +31,9 @@ const getMessage = (senderId, reciveId) => {
       const message = await Message.find({
         senderId: senderId,
         reciveId: reciveId,
-      });
+      })
+        .populate("senderId")
+        .populate("reciveId");
 
       resolve({
         status: "OK",
@@ -43,6 +45,71 @@ const getMessage = (senderId, reciveId) => {
       reject(e);
     }
   });
+};
+
+const getMessageRoom = async (userid) => {
+  try {
+    const messages = await Message.aggregate([
+      {
+        $match: {
+          $or: [
+            { senderId: new mongoose.Types.ObjectId(userid) },
+            { reciveId: new mongoose.Types.ObjectId(userid) },
+          ],
+        },
+      },
+      {
+        $sort: { createdAt: -1 }, // Sắp xếp tin nhắn mới nhất lên đầu
+      },
+      {
+        $group: {
+          _id: {
+            $cond: [
+              { $eq: ["$senderId", new mongoose.Types.ObjectId(userid)] },
+              "$reciveId",
+              "$senderId",
+            ],
+          },
+          lastMessage: { $first: "$$ROOT" }, // Lấy tin nhắn mới nhất trong nhóm
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      {
+        $unwind: "$userInfo",
+      },
+      {
+        $project: {
+          _id: 0,
+          userId: "$_id",
+          userName: "$userInfo.name",
+          avatar: "$userInfo.avatar",
+          lastMessage: "$lastMessage", // Trả về toàn bộ thông tin tin nhắn
+        },
+      },
+      {
+        $sort: { "lastMessage.createdAt": -1 }, // Sắp xếp danh sách theo tin nhắn gần nhất
+      },
+    ]);
+
+    resolve({
+      status: "OK",
+      message: "success",
+      data: messages,
+    });
+  } catch (error) {
+    console.error(error);
+    return {
+      status: "ERROR",
+      message: "Failed to get messages",
+    };
+  }
 };
 
 const deleteMessage = (messageId) => {
@@ -91,4 +158,5 @@ module.exports = {
   getMessage,
   deleteMessage,
   updateMessage,
+  getMessageRoom,
 };

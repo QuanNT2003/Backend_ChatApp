@@ -27,7 +27,7 @@ const updateMessage = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
-    const { senderId, reciveId } = req.body;
+    const { senderId, reciveId } = req.query;
     if (!senderId || !reciveId) {
       return res.status(200).json({
         status: "ERR",
@@ -35,6 +35,24 @@ const getMessage = async (req, res) => {
       });
     }
     const respone = await MessageServices.getMessage(senderId, reciveId);
+    return res.status(200).json(respone);
+  } catch (e) {
+    return res.status(404).json({
+      messge: e,
+    });
+  }
+};
+
+const getMessageRoom = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(200).json({
+        status: "ERR",
+        massage: "The input is required",
+      });
+    }
+    const respone = await MessageServices.getMessageRoom(userId);
     return res.status(200).json(respone);
   } catch (e) {
     return res.status(404).json({
@@ -72,4 +90,5 @@ module.exports = {
   createMessage,
   deleteMessage,
   updateMessage,
+  getMessageRoom,
 };
