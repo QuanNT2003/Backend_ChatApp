@@ -1,4 +1,4 @@
-const UserRouter = require("./user.router");
+const UserRouter = require("./user.route");
 const MessageRouter = require("./message.route");
 const routes = (app) => {
   app.use("/user", UserRouter);
