@@ -5,11 +5,19 @@ const routes = require("./routes");
 const bodyParter = require("body-parser");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
+const http = require("http");
+const { initSocket } = require("./config/socket");
 
 dotenv.config();
 
 const app = express();
 const port = 3001;
+
+// Tạo HTTP server để dùng với socket
+const server = http.createServer(app);
+
+// Khởi tạo socket
+initSocket(server);
 
 app.use(bodyParter.json({ limit: "50mb" }));
 app.use(cors());
@@ -34,6 +42,6 @@ mongoose
     console.log(err);
   });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Server is running in port " + port);
 });
