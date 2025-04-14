@@ -45,8 +45,6 @@ const getMessage = async (req, res) => {
 
 const getMessageRoom = async (req, res) => {
   try {
-    console.log("get message room");
-
     const { id } = req.params;
     if (!id) {
       return res.status(200).json({

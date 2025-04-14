@@ -107,12 +107,9 @@ const getMessageRoom = async (userid) => {
         message: "success",
         data: messages,
       });
-    } catch (error) {
-      console.error(error);
-      return {
-        status: "ERROR",
-        message: "Failed to get messages",
-      };
+    } catch (e) {
+      console.error(e);
+      reject(e);
     }
   });
 };
