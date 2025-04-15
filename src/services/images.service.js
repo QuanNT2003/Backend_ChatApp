@@ -3,7 +3,7 @@ const cloudinary = require("../config/cloudinaryConfig");
 const uploadImages = (images) => {
   return new Promise(async (resolve, reject) => {
     try {
-      // console.log(images);
+      //console.log(images);
 
       let resultImage = [];
 
